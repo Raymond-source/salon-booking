@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Booking System - Book Your Appointment</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-spa"></i>
+                    <span>Glamour Salon</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#home" class="nav-link active">Home</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                </div>
+                <div class="auth-buttons">
+                    <button id="loginBtn" class="btn-outline">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <button id="signupBtn" class="btn-primary">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </button>
+                </div>
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Book Your Perfect Salon Experience</h1>
+            <p class="hero-subtitle">Easy online booking • Expert stylists • Flexible scheduling</p>
+            <button id="bookNowBtn" class="btn-hero">
+                <i class="fas fa-calendar-check"></i> Book Now
+            </button>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Salon Service">
+        </div>
+    </section>
+
+    <!-- Main Booking Container -->
+    <main class="main-container">
+        <!-- Booking Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Choose Service</span>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Pick Time</span>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Your Details</span>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Confirm</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Service Selection -->
+        <section id="step-1" class="booking-step active">
+            <div class="step-header">
+                <h2>Choose Your Service</h2>
+                <p>Select from our range of professional salon services</p>
+            </div>
+            
+            <div class="service-filters">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-category="all">All Services</button>
+                    <button class="filter-btn" data-category="hair">Hair</button>
+                    <button class="filter-btn" data-category="nails">Nails</button>
+                    <button class="filter-btn" data-category="braids">Braids</button>
+                    <button class="filter-btn" data-category="makeup">Makeup</button>
+                </div>
+            </div>
+            
+            <div class="services-grid" id="servicesGrid">
+                <!-- Services loaded dynamically -->
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading services...</p>
+                </div>
+            </div>
+            
+            <div class="step-actions">
+                <button id="nextStep1" class="btn-primary" disabled>
+                    Next: Choose Time <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 2: Date & Time Selection -->
+        <section id="step-2" class="booking-step">
+            <div class="step-header">
+                <button class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <h2>Select Date & Time</h2>
+                <p>Choose a convenient time for your appointment</p>
+            </div>
+            
+            <div class="selected-service-preview" id="selectedServicePreview">
+                <!-- Selected service preview -->
+            </div>
+            
+            <div class="datetime-container">
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <button id="prevMonth" class="calendar-nav">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 id="currentMonth">February 2024</h3>
+                        <button id="nextMonth" class="calendar-nav">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+                    <div class="calendar-days" id="calendarDays">
+                        <!-- Calendar days loaded dynamically -->
+                    </div>
+                </div>
+                
+                <div class="timeslots-section">
+                    <div class="timeslots-header">
+                        <h4>Available Time Slots</h4>
+                        <div class="date-display" id="selectedDateDisplay">
+                            Select a date
+                        </div>
+                    </div>
+                    <div class="timeslots-grid" id="timeslotsGrid">
+                        <!-- Time slots loaded dynamically -->
+                        <div class="no-slots">
+                            <p>Select a date to see available times</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-actions">
+                <button class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button id="nextStep2" class="btn-primary" disabled>
+                    Next: Your Details <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 3: Customer Details -->
+        <section id="step-3" class="booking-step">
+            <div class="step-header">
+                <button class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <h2>Your Information</h2>
+                <p>Enter your details to complete the booking</p>
+            </div>
+            
+            <div class="booking-summary" id="bookingSummary">
+                <!-- Booking summary loaded dynamically -->
+            </div>
+            
+            <div class="customer-form-container">
+                <div class="auth-options">
+                    <p class="auth-prompt">Already have an account?</p>
+                    <div class="auth-buttons">
+                        <button id="quickLoginBtn" class="btn-secondary">
+                            <i class="fas fa-sign-in-alt"></i> Quick Login
+                        </button>
+                        <div id="googleSignIn" class="google-btn">
+                            <!-- Google Sign In Button -->
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="customerForm" class="customer-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerName">
+                                <i class="fas fa-user"></i> Full Name *
+                            </label>
+                            <input type="text" id="customerName" required 
+                                   placeholder="Enter your full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="customerPhone">
+                                <i class="fas fa-phone"></i> Phone Number *
+                            </label>
+                            <input type="tel" id="customerPhone" required 
+                                   placeholder="072 123 4567">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerEmail">
+                            <i class="fas fa-envelope"></i> Email Address (Optional)
+                        </label>
+                        <input type="email" id="customerEmail" 
+                               placeholder="your.email@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerNotes">
+                            <i class="fas fa-sticky-note"></i> Special Requests (Optional)
+                        </label>
+                        <textarea id="customerNotes" rows="3" 
+                                  placeholder="Any special requirements or notes for your appointment..."></textarea>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="termsAgree" required>
+                        <label for="termsAgree">
+                            I agree to the <a href="#" class="text-link">Terms of Service</a> and 
+                            <a href="#" class="text-link">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="marketingOptIn">
+                        <label for="marketingOptIn">
+                            Send me special offers and updates about salon services
+                        </label>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="step-actions">
+                <button class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button id="confirmBookingBtn" class="btn-primary">
+                    Confirm Booking <i class="fas fa-check"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 4: Confirmation -->
+        <section id="step-4" class="booking-step">
+            <div class="confirmation-container">
+                <div class="confirmation-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Booking Confirmed!</h2>
+                <p class="confirmation-message">
+                    Your appointment has been successfully booked. You'll receive a confirmation message shortly.
+                </p>
+                
+                <div class="confirmation-details" id="confirmationDetails">
+                    <!-- Booking details loaded dynamically -->
+                </div>
+                
+                <div class="confirmation-actions">
+                    <button id="newBookingBtn" class="btn-primary">
+                        <i class="fas fa-calendar-plus"></i> Book Another Service
+                    </button>
+                    <button id="viewBookingsBtn" class="btn-outline">
+                        <i class="fas fa-list"></i> View My Bookings
+                    </button>
+                    <button id="downloadCalendarBtn" class="btn-outline">
+                        <i class="fas fa-calendar-alt"></i> Add to Calendar
+                    </button>
+                </div>
+                
+                <div class="confirmation-tips">
+                    <h4><i class="fas fa-lightbulb"></i> Tips for your appointment:</h4>
+                    <ul>
+                        <li>Arrive 10 minutes early</li>
+                        <li>Bring any reference photos if you have specific requests</li>
+                        <li>We'll send a reminder 24 hours before your appointment</li>
+                        <li>Cancellations must be made at least 3 hours in advance</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Preview Section -->
+        <section id="services" class="services-section">
+            <div class="section-header">
+                <h2>Our Premium Services</h2>
+                <p>Professional beauty services at your convenience</p>
+            </div>
+            <div class="services-preview">
+                <!-- Services preview cards -->
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Easy Online Booking</h3>
+                    <p>Book appointments 24/7 from any device</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Smart Reminders</h3>
+                    <p>Get SMS/WhatsApp reminders for your appointments</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Expert Stylists</h3>
+                    <p>Professional and certified beauty experts</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Safe & Secure</h3>
+                    <p>Your data is protected with encryption</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <i class="fas fa-spa"></i>
+                    <span>Glamour Salon</span>
+                </div>
+                <p>Professional beauty services with online booking convenience.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Sandton Drive, Johannesburg</li>
+                    <li><i class="fas fa-phone"></i> (011) 234-5678</li>
+                    <li><i class="fas fa-envelope"></i> info@glamoursalon.co.za</li>
+                    <li><i class="fas fa-clock"></i> Mon-Fri: 9am-6pm, Sat: 9am-4pm</li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Newsletter</h4>
+                <p>Subscribe for special offers and beauty tips</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Glamour Salon Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Welcome Back</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="login-options">
+                    <div class="login-option">
+                        <h4>Phone Login</h4>
+                        <div class="phone-login-form">
+                            <input type="tel" id="loginPhone" placeholder="072 123 4567">
+                            <button id="sendOTPBtn" class="btn-small">Send OTP</button>
+                        </div>
+                        <div class="otp-input" style="display: none;">
+                            <input type="text" id="loginOTP" placeholder="Enter 6-digit OTP" maxlength="6">
+                            <button id="verifyOTPBtn" class="btn-small">Verify</button>
+                        </div>
+                    </div>
+                    
+                    <div class="divider">OR</div>
+                    
+                    <div class="login-option">
+                        <h4>Continue with Google</h4>
+                        <div id="googleSignInModal"></div>
+                    </div>
+                    
+                    <div class="login-option">
+                        <h4>Email Login</h4>
+                        <form id="emailLoginForm">
+                            <input type="email" placeholder="Email address" required>
+                            <input type="password" placeholder="Password" required>
+                            <button type="submit" class="btn-primary">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Processing your request...</p>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="toast">
+        <div class="toast-content">
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="booking.js"></script>
+    <script src="auth.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>
